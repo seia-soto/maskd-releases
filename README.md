@@ -1,8 +1,10 @@
 # Seia-Soto/maskd-release
 
-`Seia-Soto/maskd`에 대한 한국어 문서입니다.
+The Node.JS based API server that provides data of nCov-19 of South Korea from the spread sources.
 
-## 목차
+> After version `9140a4a8249e75e15add00454742aae28375c3c8`, the docs will be provided in English.
+
+## Table of Contents
 
 - [Documentation](#documentation)
   - [Entrypoint](#entrypoint)
@@ -16,62 +18,69 @@
 
 ## Entrypoint
 
-이 API의 엔트리 포인트는 다음의 형식을 따르고 있습니다: `api-v{버전}.maskd.seia.io`
+The entrypoint of this API is following format: `api-v{version}.maskd.seia.io`
 
-| 버전 | 엔트리 포인트 |
+| version | entrypoint |
 | :------------- | :------------- |
 | v0 | api-v0.maskd.seia.io |
 
 ## Ratelimit
 
-이 API는 다음의 Rate-limiting 규칙을 가지고 있습니다: `8r/s up to 32 burst requests per IP address`
+This API adopted following rate-limiting policy: `8r/s up to 32 burst requests per IP address`
 
 ## Limitations
 
-- Request
-  - 이 API는 `multipart` 폼 데이터를 해석할 수 없습니다.
+### Request
+
+- This API doesn't support `multipart` form data.
+
+### Delay
+
+- The data of the mask stock status have 5~10 mins of delay.
 
 ## Routes
 
 ### POST: /clinics/selection
 
-선별진료소의 목록을 불러옵니다.
+Get the list of available selection clinics.
 
 #### Request form
 
-- `scope`: `identify`, `city`, ...와 같은 항목의 이름입니다. (기본값: `clinicName`)
-- `keyword`: 항목을 검색하는데에 쓰이는 문자열입니다. 이 파라메터를 전송하지 않으면 모든 항목이 출력됩니다. (기본값: `없음`)
+- `scope`: The key name of values such as `identify`, `city`, ... (default: `clinicName`)
+- `keyword`: The string need to be used to search items. If you don't send this parameter, the all items will be printed. (default: `none`)
 
 #### Response format
 
 ```json
 [
   {
-    "identify": 2,
-    "samplingAvailable": 1,
-    "province": "서울",
-    "city": "강남구",
-    "clinicName": "삼성서울병원",
-    "address": "서울특별시 강남구 일원로 81 (일원동, 삼성의료원)",
-    "representativeContact": "02-3410-2114"
+   "id": 3,
+   "identify": 3,
+   "samplingAvailable": 1,
+   "province": "서울",
+   "city": "강남구",
+   "clinicName": "연세대학교의과대학강남세브란스병원",
+   "address": "서울특별시 강남구 언주로 211, 강남세브란스병원 (도곡동)",
+   "representativeContact": "02-2019-3114"
   }
 ]
 ```
 
 ### POST: /clinics/safelySeparated
 
-국민 안심 병원의 목록을 불러옵니다.
+Get the list of available safely separated clinics.
 
 #### Request form
 
-- `scope`: `identify`, `city`, ...와 같은 항목의 이름입니다. (기본값: `clinicName`)
-- `keyword`: 항목을 검색하는데에 쓰이는 문자열입니다. 이 파라메터를 전송하지 않으면 모든 항목이 출력됩니다. (기본값: `없음`)
+- `scope`: The key name of values such as `identify`, `city`, ... (default: `clinicName`)
+- `keyword`: The string need to be used to search items. If you don't send this parameter, the all items will be printed. (default: `none`)
 
 #### Response format
 
 ```json
 [
   {
+    "id": 1,
     "identify": 1,
     "province": "서울",
     "city": "강남구",
@@ -86,40 +95,43 @@
 
 ### POST: /masks/stores
 
-공적 마스크 판매점의 목록을 불러옵니다.
+Get the list of available stores that sell masks.
 
 #### Request form
 
-- `scope`: `identify`, `city`, ...와 같은 항목의 이름입니다. (기본값: `clinicName`)
-- `keyword`: 항목을 검색하는데에 쓰이는 문자열입니다. 최소한 2자를 필요로 합니다. (기본값: `없음`)
+- `limit`: The number of items you want to get at the time. (default: `250`, max: `1000`)
+- `page`: The number that express the `n`th part of the result if the size of the result is bigger than `limit` parameter. (default: `1`)
+- `scope`: The key name of values such as `identify`, `city`, ... (default: `clinicName`)
+- `keyword`: The string need to be used to search items. This value should be 2 words at least. (default: `none`)
 
-#### Response format
+#### Response form
 
 ```json
 [
   {
-    "identify": 12808776,
-    "address": "서울특별시 중구 다산로 72 1층 (신당동, 서울시니어스타워)",
-    "latitude": 38,
-    "longitude": 127,
-    "name": "서울시니어스약국",
+    "id": 8,
+    "identify": 11889446,
+    "address": "서울특별시 강남구 압구정로 108 1층 7호 (신사동)",
+    "latitude": "37.5228904",
+    "longitude": "127.0206138",
+    "name": "가로수길약국",
     "type": 1,
-    "stockReplenishedAt": "2020-03-15T08:54:00.000Z",
-    "stockStatus": "plenty",
-    "stockUpdatedAt": "2020-03-15T12:30:00.000Z",
-    "updatedAt": null
+    "stockReplenishedAt": null,
+    "stockStatus": "unavailable",
+    "stockUpdatedAt": null,
+    "updatedAt": "2020-03-15T14:19:38.000Z"
   }
 ]
 ```
 
 - type
-  - `1`: 약국
-  - `2`: 우체국
-  - `3`: 농협
+  - `1`: pharmacy
+  - `2`: post office
+  - `3`: NH
 
-- stockStatus (판매 가능한 마스크의 수)
+- stockStatus (the number of the masks available)
   - `plenty`: 100+,
   - `some`: 30+,
   - `few`: 2+,
-  - `empty`: 1개 혹은 없음,
-  - `break`: 판매 중단
+  - `empty`: 1 or lower,
+  - `break`: stopped selling
