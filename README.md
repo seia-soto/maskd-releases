@@ -32,7 +32,7 @@ This API adopted following rate-limiting policy: `8r/s up to 32 burst requests p
 
 ### Request
 
-- This API doesn't support `multipart` form data.
+- To send data, you should use `x-www-form-urlencoded` type of body.
 
 ### Delay
 
@@ -108,7 +108,7 @@ Get the list of available stores that sell masks.
 
 - `limit`: The number of items you want to get at the time. (default: `250`, max: `1000`)
 - `page`: The number that express the `n`th part of the result if the size of the result is bigger than `limit` parameter. (default: `1`)
-- `scope`: The key name of values such as `identify`, `city`, ... (default: `clinicName`)
+- `scope`: The key name of values such as `identify`, `address`, ... (default: `clinicName`)
 - `keyword`: The string need to be used to search items. This value should be 2 words at least. (default: `none`)
 
 #### Response form
