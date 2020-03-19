@@ -100,7 +100,9 @@ Get the list of available safely separated clinics.
 - `identify`: The national identification code.
 - `availableAt`: Datetime in KST.
 
-### POST: /masks/stores
+### POST: /masks/stores (unavailable)
+
+> This API is currently unavailable due to the resource problem.
 
 Get the list of available stores that sell masks.
 
